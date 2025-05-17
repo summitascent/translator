@@ -1,7 +1,6 @@
 .venv/
-tmp.py
+tmp*
 _secrets.py
-tmp.txt
 __pycache__/
 *.wav
 .idea/
