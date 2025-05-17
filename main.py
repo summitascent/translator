@@ -1,5 +1,6 @@
 import sounddevice as sd
 import soundfile as sf
+from threading import Event
 from utils import (
     record_audio_into_tmp_file,
     transcribe_audio,
@@ -8,17 +9,15 @@ from utils import (
 )
 
 
-def run():
-    while True:
-        file_path = record_audio_into_tmp_file()
+def run(stop_event: Event = Event()):
+    while not stop_event.is_set():
+        file_path = record_audio_into_tmp_file(stop_event=stop_event)
 
         text = transcribe_audio(file_path)
-        print(text)
-        print()
+        print(text, end="\n\n")
 
         translated_text = translate_text(text)
-        print(translated_text)
-        print()
+        print(translated_text, end="\n\n")
 
         audio = generate_audio(translated_text)
 
@@ -28,7 +27,7 @@ def run():
         # Play using sounddevice
         sd.play(data, samplerate)
         sd.wait()  # Wait until audio is finished
-        
+
 
 if __name__ == "__main__":
     run()

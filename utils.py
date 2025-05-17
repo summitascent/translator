@@ -1,12 +1,13 @@
-import io 
+import io
 import pyaudiowpatch as pyaudio
 import time
 import wave
 import tempfile
 import keyboard
+from threading import Event
+import openai
 
 from _secrets import OPEN_AI_API_KEY
-import openai
 
 REQUEST_TIMEOUT = 10
 
@@ -17,7 +18,7 @@ send_requests = False
 
 def on_key(event, key="a"):
     global send_requests
-    
+
     if event.name == key and event.event_type == "down":
         send_requests = True
 
@@ -27,7 +28,8 @@ keyboard.on_press(on_key)
 
 def record_audio(
         filename="output.wav",
-        chunk_size=512, 
+        chunk_size=512,
+        stop_event: Event = Event()
 ):
     """
     Record audio from the PC's main output device and save it to a file.
@@ -42,10 +44,10 @@ def record_audio(
         except OSError:
             print("Looks like WASAPI is not available on the system. Exiting...")
             exit()
-        
+
         # Get default WASAPI speakers
         default_speakers = p.get_device_info_by_index(wasapi_info["defaultOutputDevice"])
-        
+
         if not default_speakers["isLoopbackDevice"]:
             for loopback in p.get_loopback_device_info_generator():
                 """
@@ -58,19 +60,19 @@ def record_audio(
             else:
                 print("Default loopback output device not found.\n\nRun `python -m pyaudiowpatch` to check available devices.\nExiting...\n")
                 exit()
-                
+
         print(f"Recording from: ({default_speakers['index']}){default_speakers['name']}")
-        
+
         wave_file = wave.open(filename, 'wb')
         wave_file.setnchannels(default_speakers["maxInputChannels"])
         wave_file.setsampwidth(pyaudio.get_sample_size(pyaudio.paInt16))
         wave_file.setframerate(int(default_speakers["defaultSampleRate"]))
-        
+
         def callback(in_data, frame_count, time_info, status):
             """Write frames and return PA flag"""
             wave_file.writeframes(in_data)
             return (in_data, pyaudio.paContinue)
-        
+
         with p.open(format=pyaudio.paInt16,
                 channels=default_speakers["maxInputChannels"],
                 rate=int(default_speakers["defaultSampleRate"]),
@@ -84,38 +86,39 @@ def record_audio(
             After leaving the context, everything will
             be correctly closed(Stream, PyAudio manager)            
             """
-            while True:
+            while not stop_event.is_set():
                 global send_requests
-                
+
                 time.sleep(3) # Blocking execution while playing
-                
+
                 if send_requests:
                     print("Sending requests...")
                     send_requests = False
                     break
-                
+
             print(f"PC audio output written to {filename}")
-        
+
         wave_file.close()
-        
+
 
 def record_audio_into_tmp_file(
-        chunk_size=512, 
+        chunk_size=512,
+        stop_event: Event = Event(),
 ):
     """
     Record audio from the PC's main output device and save it to a temporary file.
     """
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
         filename = tmp_file.name
-        record_audio(filename, chunk_size)
-        
+        record_audio(filename, chunk_size, stop_event)
+
     return filename
 
 
 def transcribe_audio(file_path, language="ja"):
     with open(file_path, "rb") as audio_file:
         transcription = client.audio.transcriptions.create(
-            model="gpt-4o-transcribe", 
+            model="gpt-4o-transcribe",
             file=audio_file,
             language=language,
             include="punctuations",
@@ -123,7 +126,7 @@ def transcribe_audio(file_path, language="ja"):
             temperature=0.3,
             timeout=REQUEST_TIMEOUT,
         )
-    
+
     return transcription.text
 
 
@@ -144,14 +147,14 @@ def translate_text(text, source_language="ja", target_language="en"):
         ],
         timeout=REQUEST_TIMEOUT,
     )
-    
+
     return completion.choices[0].message.content
 
 
 def generate_audio(
         text,
-        voice="alloy", 
-        instructions="You are a character in some game.", 
+        voice="alloy",
+        instructions="You are a character in some game.",
 ):
     with client.audio.speech.with_streaming_response.create(
         model="gpt-4o-mini-tts",
@@ -162,7 +165,7 @@ def generate_audio(
         timeout=REQUEST_TIMEOUT,
     ) as response:
         audio_bytes = io.BytesIO(response.read())
-    
+
     return audio_bytes
 
 

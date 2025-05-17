@@ -2,15 +2,20 @@ import os
 import sys
 import time
 from enum import IntEnum
+from threading import Thread, Event
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.rule import Rule
 from prompt_toolkit.shortcuts import button_dialog, input_dialog
-# from threading import Thread
+
+from main import run
 
 API_KEY_FILE = "_secrets.py"
 console = Console()
+
+stop_event = Event() # event flag indicating translator thread should terminate
 
 ascii_art = r"""
 ::::::::::: :::::::::      :::     ::::    :::  ::::::::  :::            ::: ::::::::::: ::::::::  :::::::::  
@@ -76,21 +81,9 @@ def in_terminal():
 
 
 def run_main_app():
-    # def background_task():
-    #     while True:
-    #         console.print("[green]Translator is running...[/green]")
-    #         time.sleep(3)
-    #
-    # thread = Thread(target=background_task, daemon=True)
-    # thread.start()
-
-    result = button_dialog(
-        title="Translator Running...",
-        # text="What would you like to do?",
-        buttons=[("Main Menu", "back"), ("Exit App", "exit")],
-    ).run()
-
-    return result
+    thread = Thread(target=run, args=(stop_event,), daemon=True)
+    thread.start()
+    return thread
 
 
 def settings_page():
@@ -139,12 +132,18 @@ def fallback_main_menu():
                     else:
                         print("No key entered. Returning to menu.")
                         continue
+
+                thread = run_main_app()
                 print("Translator is running in background...")
 
                 try:
                     input("[running] Press any key to return to main menu.")
                 except KeyboardInterrupt:
                     continue
+
+                stop_event.set()
+                thread.join()
+                stop_event.clear()
 
             case MenuChoice.SETTINGS:
                 key = input("Enter your OPENAI API Key: ").strip()
@@ -198,7 +197,18 @@ def main_menu():
                     if not api_key:
                         continue  # user cancelled
 
-                action = run_main_app()
+                thread = run_main_app()
+
+                action = button_dialog(
+                    title="Translator Running...",
+                    # text="What would you like to do?",
+                    buttons=[("Main Menu", "back"), ("Exit App", "exit")],
+                ).run()
+
+                stop_event.set()
+                thread.join()
+                stop_event.clear()
+
                 if action == "exit":
                     break
 
@@ -224,4 +234,3 @@ if __name__ == "__main__":
         main_menu()
     else:
         fallback_main_menu()
-
