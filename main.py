@@ -16,13 +16,13 @@ def run(stop_event: Event = Event()):
         text = transcribe_audio(file_path)
         print(text, end="\n\n")
 
-        if text.strip() == "":
+        if text.strip() == "" or stop_event.is_set():
             return
 
         translated_text = translate_text(text)
         print(translated_text, end="\n\n")
 
-        if translated_text.strip() == "":
+        if translated_text.strip() == "" or stop_event.is_set():
             return
 
         audio = generate_audio(translated_text)
