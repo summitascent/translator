@@ -78,7 +78,7 @@ def run_main_app():
     result = button_dialog(
         title="App Running",
         text="What would you like to do?",
-        buttons=[("Back to Menu", "back"), ("Exit App", "exit")],
+        buttons=[("Main Menu", "back"), ("Exit App", "exit")],
     ).run()
 
     return result
