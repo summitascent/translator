@@ -3,7 +3,7 @@ import soundfile as sf
 import tempfile
 import moviepy as mp
 
-video_path = r"C:\Users\weiha\OneDrive\Documents\code\personal-projects\translator\examples\steins_gate_shorter.mkv"
+video_path = r"examples/steins_gate_shorter.mkv"
 
 # Extract audio and save to a temporary WAV file
 video = mp.VideoFileClip(video_path)
