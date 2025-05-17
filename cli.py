@@ -207,9 +207,8 @@ def main_menu():
 
             case MenuChoice.CREDITS:
                 console.print(Panel("Built by "
-                                    "[blue]Brian (Wei Hao) Ma[blue] "
-                                    "[default]&[default] "
-                                    "[green]Ryan B. Green[green]",
+                                    "[blue]Brian (Wei Hao) Ma[/blue] & "
+                                    "[green]Ryan B. Green[/green]",
                               title="Credits"))
                 time.sleep(2)
 
