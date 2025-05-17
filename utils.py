@@ -8,7 +8,7 @@ import keyboard
 from _secrets import OPEN_AI_API_KEY
 import openai
 
-REQUEST_TIMEOUT = 10
+REQUEST_TIMEOUT = 20
 
 client = openai.OpenAI(api_key=OPEN_AI_API_KEY)
 
@@ -87,7 +87,7 @@ def record_audio(
             while True:
                 global send_requests
                 
-                time.sleep(3) # Blocking execution while playing
+                time.sleep(0.25) # Blocking execution while playing
                 
                 if send_requests:
                     print("Sending requests...")
@@ -119,7 +119,9 @@ def transcribe_audio(file_path, language="ja"):
             file=audio_file,
             language=language,
             include="punctuations",
-            prompt="Transcribe all of the words in the audio file.",
+            prompt=f"Transcribe the audio file."
+                   f"If something is not in the source language '{language}', do not transcribe it at all and leave it out."
+                   f"If the audio has no voice, leave the transcription empty.",
             temperature=0.3,
             timeout=REQUEST_TIMEOUT,
         )
@@ -134,8 +136,9 @@ def translate_text(text, source_language="ja", target_language="en"):
         messages=[
             {
                 "role": "system",
-                "content": "You are a translator for dialogues from games who will "
-                           f"translate from {source_language} to {target_language}.",
+                "content": f"You are a translator for dialogues from games who will "
+                           f"translate from {source_language} to {target_language}."
+                           f"If the text is empty, leave the translation empty."
             },
             {
                 "role": "user",

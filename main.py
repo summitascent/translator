@@ -15,11 +15,17 @@ def run():
         text = transcribe_audio(file_path)
         print(text)
         print()
-
+        
+        if text.strip() == "":
+            return 
+        
         translated_text = translate_text(text)
         print(translated_text)
         print()
 
+        if translated_text.strip() == "":
+            return
+        
         audio = generate_audio(translated_text)
 
         # Read using soundfile
