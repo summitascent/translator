@@ -9,7 +9,7 @@ from rich.rule import Rule
 from prompt_toolkit.shortcuts import button_dialog, input_dialog
 # from threading import Thread
 
-API_KEY_FILE = "api_key.txt"
+API_KEY_FILE = "_secrets.py"
 console = Console()
 
 ascii_art = r"""
@@ -41,20 +41,29 @@ class MenuChoice(IntEnum):
 
 def get_api_key():
     if os.path.exists(API_KEY_FILE):
-        with open(API_KEY_FILE, "r") as f:
-            return f.read().strip()
+        try:
+            import importlib.util
+
+            spec = importlib.util.spec_from_file_location("_secrets", API_KEY_FILE)
+            secrets = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(secrets)
+
+            return getattr(secrets, "OPEN_AI_API_KEY", None)
+        except Exception as e:
+            console.print(f"[red]Failed to load API key: {e}[/red]")
+
     return None
 
 
 def save_api_key(key):
     with open(API_KEY_FILE, "w") as f:
-        f.write(key.strip())
+        f.write(f'OPEN_AI_API_KEY = "{key.strip()}"')
 
 
 def prompt_for_api_key():
     api_key = input_dialog(
         title="API Key Required",
-        text="Enter your OPENAI API Key:"
+        text="Enter your OpenAI API Key:"
     ).run()
     if api_key:
         save_api_key(api_key)
@@ -76,9 +85,9 @@ def run_main_app():
     # thread.start()
 
     result = button_dialog(
-        title="App Running",
-        text="What would you like to do?",
-        buttons=[("Back to Menu", "back"), ("Exit App", "exit")],
+        title="Translator Running...",
+        # text="What would you like to do?",
+        buttons=[("Main Menu", "back"), ("Exit App", "exit")],
     ).run()
 
     return result
@@ -124,7 +133,7 @@ def fallback_main_menu():
             case MenuChoice.START:
                 api_key = get_api_key()
                 if not api_key:
-                    api_key = input("Enter your OPENAI API Key: ").strip()
+                    api_key = input("Enter your OpenAI API Key: ").strip()
                     if api_key:
                         save_api_key(api_key)
                     else:
@@ -146,7 +155,7 @@ def fallback_main_menu():
                     print("No key entered.")
 
             case MenuChoice.CREDITS:
-                print("Built with ❤️ by You.")
+                print("Built by Brian (Wei Hao) Ma & Ryan B. Green")
                 time.sleep(2)
 
             case MenuChoice.EXIT:
@@ -183,6 +192,7 @@ def main_menu():
         match choice:
             case MenuChoice.START:
                 api_key = get_api_key()
+
                 if not api_key:
                     api_key = prompt_for_api_key()
                     if not api_key:
@@ -196,7 +206,10 @@ def main_menu():
                 settings_page()
 
             case MenuChoice.CREDITS:
-                console.print(Panel("Built with ❤️ by You", title="Credits"))
+                console.print(Panel("Built by "
+                                    "[blue]Brian (Wei Hao) Ma[/blue] & "
+                                    "[green]Ryan B. Green[/green]",
+                              title="Credits"))
                 time.sleep(2)
 
             case MenuChoice.EXIT:
