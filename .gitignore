@@ -4,3 +4,4 @@ _secrets.py
 tmp.txt
 __pycache__/
 *.wav
+.idea/
