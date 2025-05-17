@@ -3,17 +3,30 @@ import pyaudiowpatch as pyaudio
 import time
 import wave
 import tempfile
+import keyboard
 
 from _secrets import OPEN_AI_API_KEY
 import openai
 
+REQUEST_TIMEOUT = 10
 
 client = openai.OpenAI(api_key=OPEN_AI_API_KEY)
+
+send_requests = False
+
+
+def on_key(event, key="a"):
+    global send_requests
+    
+    if event.name == key and event.event_type == "down":
+        send_requests = True
+
+
+keyboard.on_press(on_key)
 
 
 def record_audio(
         filename="output.wav",
-        duration=5.0, 
         chunk_size=512, 
 ):
     """
@@ -71,15 +84,22 @@ def record_audio(
             After leaving the context, everything will
             be correctly closed(Stream, PyAudio manager)            
             """
-            print(f"The next {duration} seconds will be written to {filename}")
             while True:
-                time.sleep(duration) # Blocking execution while playing
+                global send_requests
+                
+                time.sleep(3) # Blocking execution while playing
+                
+                if send_requests:
+                    print("Sending requests...")
+                    send_requests = False
+                    break
+                
+            print(f"PC audio output written to {filename}")
         
-        # wave_file.close()
+        wave_file.close()
         
 
 def record_audio_into_tmp_file(
-        duration=5.0, 
         chunk_size=512, 
 ):
     """
@@ -87,8 +107,7 @@ def record_audio_into_tmp_file(
     """
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
         filename = tmp_file.name
-        print(f"Temporary file created: {filename}")
-        record_audio(filename, duration, chunk_size)
+        record_audio(filename, chunk_size)
         
     return filename
 
@@ -100,7 +119,9 @@ def transcribe_audio(file_path, language="ja"):
             file=audio_file,
             language=language,
             include="punctuations",
+            prompt="Transcribe all of the words in the audio file.",
             temperature=0.3,
+            timeout=REQUEST_TIMEOUT,
         )
     
     return transcription.text
@@ -120,7 +141,8 @@ def translate_text(text, source_language="ja", target_language="en"):
                 "role": "user",
                 "content": text,
             },
-        ]
+        ],
+        timeout=REQUEST_TIMEOUT,
     )
     
     return completion.choices[0].message.content
@@ -137,6 +159,7 @@ def generate_audio(
         input=text,
         instructions=instructions,
         response_format="wav",
+        timeout=REQUEST_TIMEOUT,
     ) as response:
         audio_bytes = io.BytesIO(response.read())
     
