@@ -29,9 +29,7 @@ or
 ```
 ./translator.py --verbose
 ```
-to access the command line GUI. Press '=' every time you want to send the request for a translation.
-
-If you want to change the translation source and target languages, you can take a look at the 2 character codes at [List of ISO 639 Language Codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) and change the corresponding codes in ```controls.py```. The original intent was to put the language choice in the GUI, but we ran out of time.
+to access the command line GUI. Press '=' every time you want to send the request for a translation (this can be changed in ```controls.py```). You can change the voice to one supported by ChatGPT as well in ```controls.py```.
 
 ## Submission Description
 ### Describe the problem it solves

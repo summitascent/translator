@@ -4,7 +4,7 @@ import sys
 import time
 from enum import IntEnum
 from threading import Thread, Event
-from controls import SOURCE_LANGUAGE, TARGET_LANGUAGE, SEND_REQUEST_KEY
+from controls import SOURCE_LANGUAGE, TARGET_LANGUAGE, SEND_REQUEST_KEY, VOICE
 
 from rich.console import Console
 from rich.panel import Panel
@@ -230,6 +230,7 @@ def save_language_choices(source_code, target_code):
         f.write(f"SOURCE_LANGUAGE = \"{source_code}\"\n")
         f.write(f"TARGET_LANGUAGE = \"{target_code}\"\n")
         f.write(f"SEND_REQUEST_KEY = \"{SEND_REQUEST_KEY}\"\n")  # preserve current key
+        f.write(f"VOICE = \"{VOICE}\"\n")
 
 
 def fallback_main_menu(verbose: bool = True):

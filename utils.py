@@ -8,7 +8,7 @@ from threading import Event
 import openai
 
 from _secrets import OPEN_AI_API_KEY
-from controls import SEND_REQUEST_KEY
+from controls import SEND_REQUEST_KEY, VOICE
 
 REQUEST_TIMEOUT = 20
 
@@ -157,7 +157,7 @@ def translate_text(text, source_language="ja", target_language="en"):
 
 def generate_audio(
         text,
-        voice="alloy",
+        voice=VOICE,
         instructions="You are a character in some game.",
 ):
     with client.audio.speech.with_streaming_response.create(
