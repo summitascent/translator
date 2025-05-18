@@ -8,6 +8,7 @@ from threading import Event
 import openai
 
 from _secrets import OPEN_AI_API_KEY
+from controls import SEND_REQUEST_KEY
 
 REQUEST_TIMEOUT = 20
 
@@ -16,7 +17,7 @@ client = openai.OpenAI(api_key=OPEN_AI_API_KEY)
 send_requests = False
 
 
-def on_key(event, key="="):
+def on_key(event, key=SEND_REQUEST_KEY):
     global send_requests
 
     if event.name == key and event.event_type == "down":
