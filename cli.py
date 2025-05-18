@@ -1,3 +1,4 @@
+import io
 import os
 import sys
 import time
@@ -80,8 +81,29 @@ def in_terminal():
     return sys.stdin.isatty() and sys.stdout.isatty()
 
 
-def run_main_app():
-    thread = Thread(target=run, args=(stop_event,), daemon=True)
+def run_main_app(logfile_path="translation.log"):
+    # configure logging for run thread
+    with open(logfile_path, 'w', encoding='utf-8') as f:
+        pass
+
+    class FileWriter(io.StringIO):
+        def __init__(self, file_path):
+            super().__init__()
+            self.file_path = file_path
+
+        def write(self, msg):
+            if msg.strip():
+                with open(self.file_path, 'a', encoding='utf-8') as f:
+                    f.write(msg + '\n')
+
+    def target():
+        sys.stdout = FileWriter(logfile_path)
+        try:
+            run(stop_event)
+        finally:
+            sys.stdout = sys.__stdout__
+
+    thread = Thread(target=target, daemon=True)
     thread.start()
     return thread
 
