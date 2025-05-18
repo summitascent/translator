@@ -16,7 +16,7 @@ client = openai.OpenAI(api_key=OPEN_AI_API_KEY)
 send_requests = False
 
 
-def on_key(event, key="a"):
+def on_key(event, key="="):
     global send_requests
 
     if event.name == key and event.event_type == "down":

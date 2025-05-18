@@ -4,3 +4,4 @@ _secrets.py
 __pycache__/
 *.wav
 .idea/
+*.log
