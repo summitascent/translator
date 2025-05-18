@@ -48,13 +48,12 @@ During this Hackathon, we've thought of many possibilities for the future of thi
 2. Making the output audio natural and automatic
     - Currently a button needs to be pressed for the translation of the previous dialogue section
     - Thought of trying to use voice detection and timings based off of that to automatically output audio during the hackathon but ended up using the manual method due to time constraints (we find this to be an interesting and difficult problem to explore in the future)
-    - Some languages (like Japanese) require a situational understanding in order to more accurately translate. Otherwise, the nuances will be lost in translation. Ideally, the translator would remember relevent recent dialogue content to keep the nuances during word selection when translating new sentences. 
+    - Some languages (like Japanese) require a situational understanding in order to more accurately translate. Otherwise, the nuances will be lost in translation. Ideally, the translator would remember relevant recent dialogue content to keep the nuances during word selection when translating new sentences. 
 3. Inspired by Challenge 1 (Turning Public Information into Game-Smart Tools), improve the situational understanding and personality of the translations by using web scraping
     - There are many public Wiki pages online for games (for example [Steins;Gate Wiki](https://steins-gate.fandom.com/wiki/Steins;Gate_Wiki)) with information on the characters. These pages can be scraped for data and used to help more accurately create personas for the characters in (1).
 4. Provide an option to completely replace the original audio with the translation
     - Ideally, the translation would replace the original audio completely (this is a non-trivial problem because the original audio contains background music/sounds as well as the voices of characters so we cannot simply mute the original audio or else we would be missing the background music/sounds in the translation)
 5. Improve GUI
-    - Add language choices (Japanese->English, English->Japanese, French->English etc.)
     - Make the GUI an actual standalone .exe program instead of running it through the command line
 6. Make the response time of the program faster
     - Currently bottle-necked by ChatGPT API response time
