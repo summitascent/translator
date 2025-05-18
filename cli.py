@@ -10,7 +10,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.rule import Rule
-from prompt_toolkit.shortcuts import button_dialog, input_dialog
+from prompt_toolkit.shortcuts import button_dialog, input_dialog, radiolist_dialog
 
 API_KEY_FILE = "_secrets.py"
 console = Console()
@@ -120,6 +120,115 @@ def settings_page():
         console.print("[bold red]No API key entered.[/bold red]")
     time.sleep(1)
 
+def choose_languages(cur_source: str = "", cur_target: str = "",
+                     is_fallback: bool = False):
+    LANGUAGES = [
+        ("SQ", "Albanian"),
+        ("AM", "Amharic"),
+        ("AR", "Arabic"),
+        ("HY", "Armenian"),
+        ("BN", "Bengali"),
+        ("BS", "Bosnian"),
+        ("BG", "Bulgarian"),
+        ("MY", "Burmese"),
+        ("CA", "Catalan"),
+        ("ZH", "Chinese"),
+        ("HR", "Croatian"),
+        ("CS", "Czech"),
+        ("DA", "Danish"),
+        ("NL", "Dutch"),
+        ("ET", "Estonian"),
+        ("FI", "Finnish"),
+        ("FR", "French"),
+        ("KA", "Georgian"),
+        ("DE", "German"),
+        ("EL", "Greek"),
+        ("EN", "English"),
+        ("GU", "Gujarati"),
+        ("HI", "Hindi"),
+        ("HU", "Hungarian"),
+        ("IS", "Icelandic"),
+        ("ID", "Indonesian"),
+        ("IT", "Italian"),
+        ("JA", "Japanese"),
+        ("KN", "Kannada"),
+        ("KK", "Kazakh"),
+        ("KO", "Korean"),
+        ("LV", "Latvian"),
+        ("LT", "Lithuanian"),
+        ("MK", "Macedonian"),
+        ("MS", "Malay"),
+        ("ML", "Malayalam"),
+        ("MR", "Marathi"),
+        ("MN", "Mongolian"),
+        ("NO", "Norwegian"),
+        ("FA", "Persian"),
+        ("PL", "Polish"),
+        ("PT", "Portuguese"),
+        ("PA", "Punjabi"),
+        ("RO", "Romanian"),
+        ("RU", "Russian"),
+        ("SR", "Serbian"),
+        ("SK", "Slovak"),
+        ("SL", "Slovenian"),
+        ("SO", "Somali"),
+        ("ES", "Spanish"),
+        ("SW", "Swahili"),
+        ("SV", "Swedish"),
+        ("TL", "Tagalog"),
+        ("TA", "Tamil"),
+        ("TE", "Telugu"),
+        ("TH", "Thai"),
+        ("TR", "Turkish"),
+        ("UK", "Ukrainian"),
+        ("UR", "Urdu"),
+        ("VI", "Vietnamese")
+    ]
+
+    if is_fallback:
+        source = input(f"Enter a source language code (default: {cur_source}): ")
+
+        if source not in [code for code, _ in LANGUAGES]:
+            print("ERROR: Invalid Language Code")
+            return None, None
+
+        if not source:
+            return None, None
+
+        target = input(f"Enter a target language code (default: {cur_target}): ")
+
+        if target not in [code for code, _ in LANGUAGES]:
+            print("ERROR: Invalid Language Code")
+            return None, None
+
+        return source, target
+
+    source = radiolist_dialog(
+        title="Source Language",
+        text="Choose the language to translate from:",
+        values=LANGUAGES,
+        default=cur_source
+    ).run()
+
+    if not source:
+        return None, None
+
+    target = radiolist_dialog(
+        title="Target Language",
+        text="Choose the language to translate to:",
+        values=LANGUAGES,
+        default=cur_target
+    ).run()
+
+    return source, target
+
+
+def save_language_choices(source_code, target_code):
+    with open("controls.py", "w") as f:
+        f.write(f"SOURCE_LANGUAGE = \"{source_code}\"\n")
+        f.write(f"TARGET_LANGUAGE = \"{target_code}\"\n")
+        f.write(f"SEND_REQUEST_KEY = \"{SEND_REQUEST_KEY}\"\n")  # preserve current key
+
 
 def fallback_main_menu(verbose: bool = True):
     console.clear()
@@ -158,6 +267,18 @@ def fallback_main_menu(verbose: bool = True):
                     else:
                         print("No key entered. Returning to menu.")
                         continue
+
+                from controls import __dict__ as controls_dict
+                source, target = choose_languages(controls_dict["SOURCE_LANGUAGE"],
+                                                  controls_dict["TARGET_LANGUAGE"],
+                                                  is_fallback=True)
+                if not source or not target:
+                    continue  # user cancelled
+
+                controls_dict["SOURCE_LANGUAGE"] = source
+                controls_dict["TARGET_LANGUAGE"] = target
+
+                save_language_choices(source, target)
 
                 thread = run_main_app(verbose=verbose)
 
@@ -226,14 +347,38 @@ def main_menu(verbose: bool = False):
                     if not api_key:
                         continue  # user cancelled
 
+                from controls import __dict__ as controls_dict
+                source, target = choose_languages(controls_dict["SOURCE_LANGUAGE"],
+                                                  controls_dict["TARGET_LANGUAGE"])
+                if not source or not target:
+                    continue  # user cancelled
+
+                controls_dict["SOURCE_LANGUAGE"] = source
+                controls_dict["TARGET_LANGUAGE"] = target
+
+                save_language_choices(source, target)
+
                 thread = run_main_app(verbose=verbose)
+
+                from prompt_toolkit.formatted_text import FormattedText
+                from prompt_toolkit.styles import Style
+
+                style = Style.from_dict({
+                    "bold": "bold",
+                    "dialog frame.label": "bold",
+                })
+
+                msg = FormattedText([
+                    ("", f"🌐 Translating {source} ➝ {target} - Press "),
+                    ("bold", SEND_REQUEST_KEY),
+                    ("", " to translate!"),
+                ])
 
                 action = button_dialog(
                     title="Translator Running...",
-                    text=f"🌐 Translating {SOURCE_LANGUAGE.upper()} ➝ "
-                         f"{TARGET_LANGUAGE.upper()} - "
-                         f"Press {SEND_REQUEST_KEY} to translate!",
+                    text=msg,
                     buttons=[("Main Menu", "back"), ("Exit App", "exit")],
+                    style=style,
                 ).run()
 
                 stop_event.set()
