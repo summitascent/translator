@@ -8,35 +8,35 @@ Make sure you have Python 3.13 installed as this project was developed using Pyt
 Clone this GitHub repository and in the command line, open this repository's directory and run:
 
 For Windows 11
-```
+```sh
 py -3.13 -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 For Linux and Mac
-```
+```sh
 python3.13 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Afterwards run:
-```
+Afterward run:
+```sh
 python ./translator.py
 ```
 or 
-```
+```sh
 ./translator.py --verbose
 ```
-to access the command line GUI. Press '=' every time you want to send the request for a translation (this can be changed in ```controls.py```). You can change the voice to one supported by ChatGPT as well in ```controls.py```.
+to access the command line GUI. Press `=` every time you want to send the request for a translation (this can be changed in `controls.py`). You can change the voice to one supported by ChatGPT as well in `controls.py`.
 
 ## Submission Description
 ### Describe the problem it solves
-Our project is a universal dialogue translator which aims to make games more accessible with regards to language barrier. For example, some games will only provide Japanese voices. In this case, for an English user, our project will translate the dialogue into English.
+Our project is a universal dialogue translator which aims to make games more accessible with regard to language barrier. For example, some games will only provide Japanese voices. In this case, for an English user, our project will translate the dialogue into English.
 
 ### What real-world impact does it have
-There are many games, especially smaller games with lower budget, that only have voice overs in one language. Allowing users to translate the dialogue on-the-spot to their own mother tongue will make the gaming experience more enticing to many. 
+There are many games, especially smaller games with lower budget, that only have voice-overs in one language. Allowing users to translate the dialogue on-the-spot to their own mother tongue will make the gaming experience more enticing to many. 
 
 ### What technologies did you use to make it
 This project was written completely in Python. For LLMs, we only used the ChatGPT API.
@@ -57,7 +57,7 @@ During this Hackathon, we've thought of many possibilities for the future of thi
     - Add language choices (Japanese->English, English->Japanese, French->English etc.)
     - Make the GUI an actual standalone .exe program instead of running it through the command line
 6. Make the response time of the program faster
-    - Currently bottlenecked by ChatGPT API response time
+    - Currently bottle-necked by ChatGPT API response time
         - Sometimes it is faster than other times (and this is often unpredictable)
         - We found that when the response time was faster, our user experience was much better
 7. Include functionality for text translation as well
