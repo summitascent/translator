@@ -1,6 +1,38 @@
 # SummitAscent Translator
 This is Brian and Ryan's submission for the May 2025 Supercell AI Hackathon.
 
+## Usage Instructions
+These instructions apply to Windows 11 users (Linux and Mac should have similar steps).
+
+Make sure you have Python 3.13 installed as this project was developed using Python 3.13.
+Clone this GitHub repository and in the command line, open this repository's directory and run:
+
+For Windows 11
+```
+py -3.13 -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+For Linux and Mac
+```
+python3.13 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Afterwards run:
+```
+python ./translator.py
+```
+or 
+```
+./translator.py --verbose
+```
+to access the command line GUI. Press '=' every time you want to send the request for a translation.
+
+If you want to change the translation source and target languages, you can take a look at the 2 character codes at [List of ISO 639 Language Codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) and change the corresponding codes in ```controls.py```. The original intent was to put the language choice in the GUI, but we ran out of time.
+
 ## Submission Description
 ### Describe the problem it solves
 Our project is a universal dialogue translator which aims to make games more accessible with regards to language barrier. For example, some games will only provide Japanese voices. In this case, for an English user, our project will translate the dialogue into English.
@@ -33,3 +65,4 @@ During this Hackathon, we've thought of many possibilities for the future of thi
 7. Include functionality for text translation as well
     - To make this a universal functionality, we would need to use computer vision
     - For things like visual novels (which usually have side by side both text and speech), we can combine the text extracted with computer vision as well as the text extracted from speech to make a more accurate final translation
+

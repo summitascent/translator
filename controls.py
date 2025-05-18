@@ -1,0 +1,2 @@
+SOURCE_LANGUAGE = "ja"
+TARGET_LANGUAGE = "en"
