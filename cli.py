@@ -4,6 +4,7 @@ import sys
 import time
 from enum import IntEnum
 from threading import Thread, Event
+from controls import SOURCE_LANGUAGE, TARGET_LANGUAGE, SEND_REQUEST_KEY
 
 from rich.console import Console
 from rich.panel import Panel
@@ -159,7 +160,10 @@ def fallback_main_menu(verbose: bool = True):
                         continue
 
                 thread = run_main_app(verbose=verbose)
-                print("Translator is running in background...")
+
+                print(f"🌐 Translating {SOURCE_LANGUAGE.upper()} ➝ "
+                         f"{TARGET_LANGUAGE.upper()} - "
+                         f"Press {SEND_REQUEST_KEY} to translate!")
 
                 try:
                     input("[running] Enter any key to return to main menu.\n")
@@ -226,7 +230,9 @@ def main_menu(verbose: bool = False):
 
                 action = button_dialog(
                     title="Translator Running...",
-                    # text="What would you like to do?",
+                    text=f"🌐 Translating {SOURCE_LANGUAGE.upper()} ➝ "
+                         f"{TARGET_LANGUAGE.upper()} - "
+                         f"Press {SEND_REQUEST_KEY} to translate!",
                     buttons=[("Main Menu", "back"), ("Exit App", "exit")],
                 ).run()
 
