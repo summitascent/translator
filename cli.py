@@ -12,8 +12,6 @@ from rich.text import Text
 from rich.rule import Rule
 from prompt_toolkit.shortcuts import button_dialog, input_dialog
 
-from main import run
-
 API_KEY_FILE = "_secrets.py"
 console = Console()
 
@@ -83,6 +81,8 @@ def in_terminal():
 
 
 def run_main_app(logfile_path="translation.log", verbose: bool = False):
+    from main import run
+
     if not verbose:
         # configure logging for run thread
         with open(logfile_path, 'w', encoding='utf-8') as f:
