@@ -122,6 +122,7 @@ def settings_page():
         console.print("[bold red]No API key entered.[/bold red]")
     time.sleep(1)
 
+
 def choose_languages(cur_source: str = "", cur_target: str = "",
                      is_fallback: bool = False):
     LANGUAGES = [
@@ -369,7 +370,7 @@ def main_menu(verbose: bool = False):
                 })
 
                 msg = FormattedText([
-                    ("", f"🌐 Translating {source} ➝ {target} - Press "),
+                    ("", f"🌐 Translating {source.upper()} ➝ {target.upper()} - Press "),
                     ("bold", SEND_REQUEST_KEY),
                     ("", " to translate!"),
                 ])
