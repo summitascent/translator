@@ -17,6 +17,9 @@ def run(stop_event: Event = Event()):
     while not stop_event.is_set():
         file_path = record_audio_into_tmp_file(stop_event=stop_event)
 
+        if stop_event.is_set():
+            return
+
         text = transcribe_audio(file_path, language=SOURCE_LANGUAGE)
         print(text, end="\n\n")
 
