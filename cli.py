@@ -83,7 +83,6 @@ def in_terminal():
 
 def run_main_app(logfile_path="translation.log", verbose: bool = False):
     if not verbose:
-
         # configure logging for run thread
         with open(logfile_path, 'w', encoding='utf-8') as f:
             pass
@@ -99,10 +98,10 @@ def run_main_app(logfile_path="translation.log", verbose: bool = False):
                         f.write(msg + '\n')
 
     def target():
-        if not verbose:
-            sys.stdout = FileWriter(logfile_path)
-
         try:
+            if not verbose:
+                sys.stdout = FileWriter(logfile_path)
+
             run(stop_event)
         finally:
             sys.stdout = sys.__stdout__
@@ -121,7 +120,7 @@ def settings_page():
     time.sleep(1)
 
 
-def fallback_main_menu(verbose: bool = False):
+def fallback_main_menu(verbose: bool = True):
     console.clear()
     console.rule("[bold red]Fallback Mode Activated")
     console.print("[yellow]You're not running this in a real terminal.[/yellow]")
@@ -163,7 +162,7 @@ def fallback_main_menu(verbose: bool = False):
                 print("Translator is running in background...")
 
                 try:
-                    input("[running] Press any key to return to main menu.")
+                    input("[running] Enter any key to return to main menu.\n")
                 except KeyboardInterrupt:
                     continue
 

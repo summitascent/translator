@@ -21,7 +21,7 @@ def main():
     if in_terminal():
         main_menu(verbose=args.verbose)
     else:
-        fallback_main_menu(verbose=args.verbose)
+        fallback_main_menu(verbose=True)
 
 
 if __name__ == "__main__":
