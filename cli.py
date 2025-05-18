@@ -11,6 +11,8 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.rule import Rule
 from prompt_toolkit.shortcuts import button_dialog, input_dialog, radiolist_dialog
+from prompt_toolkit.formatted_text import FormattedText
+from prompt_toolkit.styles import Style
 
 API_KEY_FILE = "_secrets.py"
 console = Console()
@@ -359,9 +361,6 @@ def main_menu(verbose: bool = False):
                 save_language_choices(source, target)
 
                 thread = run_main_app(verbose=verbose)
-
-                from prompt_toolkit.formatted_text import FormattedText
-                from prompt_toolkit.styles import Style
 
                 style = Style.from_dict({
                     "bold": "bold",
