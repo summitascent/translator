@@ -322,7 +322,8 @@ def fallback_main_menu(verbose: bool = True):
 def show_title():
     console.clear()
     console.print(Rule(style="cyan"))
-    console.print(Panel(Text(ascii_art, justify="center", style="bold magenta"), expand=False, border_style="bright_blue"))
+    console.print(Panel(Text(ascii_art, justify="center", style="bold magenta"),
+                        expand=False, border_style="bright_blue"))
     console.print(Rule(style="cyan"))
 
 
