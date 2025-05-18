@@ -1,5 +1,5 @@
 # SummitAscent Translator
-This is Brian and Ryan's submission for the May 2025 Supercell AI Hackathon.
+This is Brian and Ryan's submission for the [May 2025 Supercell AI Hackathon](https://eu.junctionplatform.com/dashboard/event/gamejam-2025/).
 
 ## Usage Instructions
 These instructions apply to Windows 11 users (Linux and Mac should have similar steps).
