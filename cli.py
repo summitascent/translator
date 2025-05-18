@@ -81,23 +81,27 @@ def in_terminal():
     return sys.stdin.isatty() and sys.stdout.isatty()
 
 
-def run_main_app(logfile_path="translation.log"):
-    # configure logging for run thread
-    with open(logfile_path, 'w', encoding='utf-8') as f:
-        pass
+def run_main_app(logfile_path="translation.log", verbose: bool = False):
+    if not verbose:
 
-    class FileWriter(io.StringIO):
-        def __init__(self, file_path):
-            super().__init__()
-            self.file_path = file_path
+        # configure logging for run thread
+        with open(logfile_path, 'w', encoding='utf-8') as f:
+            pass
 
-        def write(self, msg):
-            if msg.strip():
-                with open(self.file_path, 'a', encoding='utf-8') as f:
-                    f.write(msg + '\n')
+        class FileWriter(io.StringIO):
+            def __init__(self, file_path):
+                super().__init__()
+                self.file_path = file_path
+
+            def write(self, msg):
+                if msg.strip():
+                    with open(self.file_path, 'a', encoding='utf-8') as f:
+                        f.write(msg + '\n')
 
     def target():
-        sys.stdout = FileWriter(logfile_path)
+        if not verbose:
+            sys.stdout = FileWriter(logfile_path)
+
         try:
             run(stop_event)
         finally:
@@ -117,7 +121,7 @@ def settings_page():
     time.sleep(1)
 
 
-def fallback_main_menu():
+def fallback_main_menu(verbose: bool = False):
     console.clear()
     console.rule("[bold red]Fallback Mode Activated")
     console.print("[yellow]You're not running this in a real terminal.[/yellow]")
@@ -155,7 +159,7 @@ def fallback_main_menu():
                         print("No key entered. Returning to menu.")
                         continue
 
-                thread = run_main_app()
+                thread = run_main_app(verbose=verbose)
                 print("Translator is running in background...")
 
                 try:
@@ -194,7 +198,7 @@ def show_title():
     console.print(Rule(style="cyan"))
 
 
-def main_menu():
+def main_menu(verbose: bool = False):
     while True:
         console.clear()
         show_title()  # <- updated title
@@ -219,7 +223,7 @@ def main_menu():
                     if not api_key:
                         continue  # user cancelled
 
-                thread = run_main_app()
+                thread = run_main_app(verbose=verbose)
 
                 action = button_dialog(
                     title="Translator Running...",
