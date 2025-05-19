@@ -23,14 +23,20 @@ def run(stop_event: Event = Event()):
         text = transcribe_audio(file_path, language=SOURCE_LANGUAGE)
         print(text, end="\n\n")
 
-        if text.strip() == "" or stop_event.is_set():
+        if stop_event.is_set():
             return
+
+        if text.strip() == "":
+            continue
 
         translated_text = translate_text(text, source_language=SOURCE_LANGUAGE, target_language=TARGET_LANGUAGE)
         print(translated_text, end="\n\n")
 
-        if translated_text.strip() == "" or stop_event.is_set():
+        if stop_event.is_set():
             return
+
+        if translated_text.strip() == "":
+            continue
 
         audio = generate_audio(translated_text)
 

@@ -120,18 +120,25 @@ def record_audio_into_tmp_file(
 
 
 def transcribe_audio(file_path, language="ja"):
-    with open(file_path, "rb") as audio_file:
-        transcription = client.audio.transcriptions.create(
-            model="gpt-4o-transcribe",
-            file=audio_file,
-            language=language,
-            include="punctuations",
-            prompt=f"Transcribe the audio file."
-                   f"If something is not in the source language '{language}', do not transcribe it at all and leave it out."
-                   f"If the audio has no voice, leave the transcription empty.",
-            temperature=0.3,
-            timeout=REQUEST_TIMEOUT,
-        )
+    try:
+        with open(file_path, "rb") as audio_file:
+            transcription = client.audio.transcriptions.create(
+                model="gpt-4o-transcribe",
+                file=audio_file,
+                language=language,
+                include="punctuations",
+                prompt=f"Transcribe the audio file."
+                       f"If something is not in the source language '{language}', do not transcribe it at all and leave it out."
+                       f"If the audio has no voice, leave the transcription empty.",
+                temperature=0.3,
+                timeout=REQUEST_TIMEOUT,
+            )
+    except openai.BadRequestError as e:
+        if e.code == 'invalid_value':
+            print("Audio recording too short.")
+            return ""
+        else:
+            raise e
 
     return transcription.text
 
