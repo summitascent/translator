@@ -1,4 +1,3 @@
-moviepy~=2.1.2
 sounddevice~=0.5.2
 soundfile~=0.13.1
 PyAudioWPatch~=0.2.12.7
