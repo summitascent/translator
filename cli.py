@@ -3,14 +3,26 @@ import os
 import sys
 import time
 from enum import IntEnum
-from threading import Thread, Event
-from controls import SOURCE_LANGUAGE, TARGET_LANGUAGE, SEND_REQUEST_KEY, VOICE
+from threading import (
+    Thread,
+    Event,
+)
+from controls import (
+    SOURCE_LANGUAGE,
+    TARGET_LANGUAGE,
+    SEND_REQUEST_KEY,
+    VOICE,
+)
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.rule import Rule
-from prompt_toolkit.shortcuts import button_dialog, input_dialog, radiolist_dialog
+from prompt_toolkit.shortcuts import (
+    button_dialog,
+    input_dialog,
+    radiolist_dialog,
+)
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
@@ -70,7 +82,7 @@ def save_api_key(key):
 def prompt_for_api_key():
     api_key = input_dialog(
         title="API Key Required",
-        text="Enter your OpenAI API Key:"
+        text="Enter your OpenAI API Key:",
     ).run()
     if api_key:
         save_api_key(api_key)
@@ -185,7 +197,7 @@ def choose_languages(cur_source: str = "", cur_target: str = "",
         ("tr", "Turkish"),
         ("uk", "Ukrainian"),
         ("ur", "Urdu"),
-        ("vi", "Vietnamese")
+        ("vi", "Vietnamese"),
     ]
 
     if is_fallback:
@@ -210,7 +222,7 @@ def choose_languages(cur_source: str = "", cur_target: str = "",
         title="Source Language",
         text="Choose the language to translate from:",
         values=LANGUAGES,
-        default=cur_source
+        default=cur_source,
     ).run()
 
     if not source:
@@ -220,7 +232,7 @@ def choose_languages(cur_source: str = "", cur_target: str = "",
         title="Target Language",
         text="Choose the language to translate to:",
         values=LANGUAGES,
-        default=cur_target
+        default=cur_target,
     ).run()
 
     return source, target
@@ -273,9 +285,12 @@ def fallback_main_menu(verbose: bool = True):
                         continue
 
                 from controls import __dict__ as controls_dict
-                source, target = choose_languages(controls_dict["SOURCE_LANGUAGE"],
-                                                  controls_dict["TARGET_LANGUAGE"],
-                                                  is_fallback=True)
+                source, target = choose_languages(
+                    controls_dict["SOURCE_LANGUAGE"],
+                    controls_dict["TARGET_LANGUAGE"],
+                    is_fallback=True,
+                )
+
                 if not source or not target:
                     continue  # user cancelled
 

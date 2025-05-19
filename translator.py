@@ -1,5 +1,9 @@
 import argparse
-from cli import in_terminal, main_menu, fallback_main_menu
+from cli import (
+    in_terminal,
+    main_menu,
+    fallback_main_menu,
+)
 
 def parse_args():
     parser = argparse.ArgumentParser(

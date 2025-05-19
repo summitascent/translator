@@ -8,7 +8,10 @@ from threading import Event
 import openai
 
 from _secrets import OPEN_AI_API_KEY
-from controls import SEND_REQUEST_KEY, VOICE
+from controls import (
+    SEND_REQUEST_KEY,
+    VOICE,
+)
 
 REQUEST_TIMEOUT = 20
 
