@@ -2,14 +2,13 @@ import io
 import os
 import sys
 import time
+import importlib
 from enum import IntEnum
 from threading import (
     Thread,
     Event,
 )
 from controls import (
-    SOURCE_LANGUAGE,
-    TARGET_LANGUAGE,
     SEND_REQUEST_KEY,
     VOICE,
 )
@@ -95,7 +94,8 @@ def in_terminal():
 
 
 def run_main_app(logfile_path="translation.log", verbose: bool = False):
-    from main import run
+    import main
+    importlib.reload(main)
 
     if not verbose:
         # configure logging for run thread
@@ -117,7 +117,7 @@ def run_main_app(logfile_path="translation.log", verbose: bool = False):
             if not verbose:
                 sys.stdout = FileWriter(logfile_path)
 
-            run(stop_event)
+            main.run(stop_event)
         finally:
             sys.stdout = sys.__stdout__
 
@@ -301,8 +301,8 @@ def fallback_main_menu(verbose: bool = True):
 
                 thread = run_main_app(verbose=verbose)
 
-                print(f"🌐 Translating {SOURCE_LANGUAGE.upper()} ➝ "
-                         f"{TARGET_LANGUAGE.upper()} - "
+                print(f"🌐 Translating {source.upper()} ➝ "
+                         f"{target.upper()} - "
                          f"Press {SEND_REQUEST_KEY} to translate!")
 
                 try:
