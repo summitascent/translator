@@ -30,7 +30,7 @@ console = Console()
 
 stop_event = Event() # event flag indicating translator thread should terminate
 
-ascii_art = r"""
+ASCII_LOGO = r"""
 ::::::::::: :::::::::      :::     ::::    :::  ::::::::  :::            ::: ::::::::::: ::::::::  :::::::::
     :+:     :+:    :+:   :+: :+:   :+:+:   :+: :+:    :+: :+:          :+: :+:   :+:    :+:    :+: :+:    :+:
     +:+     +:+    +:+  +:+   +:+  :+:+:+  +:+ +:+        +:+         +:+   +:+  +:+    +:+    +:+ +:+    +:+
@@ -39,6 +39,69 @@ ascii_art = r"""
     #+#     #+#    #+# #+#     #+# #+#   #+#+# #+#    #+# #+#        #+#     #+# #+#    #+#    #+# #+#    #+#
     ###     ###    ### ###     ### ###    ####  ########  ########## ###     ### ###     ########  ###    ###
 """
+
+LANGUAGES = [
+    ("sq", "Albanian"),
+    ("am", "Amharic"),
+    ("ar", "Arabic"),
+    ("hy", "Armenian"),
+    ("bn", "Bengali"),
+    ("bs", "Bosnian"),
+    ("bg", "Bulgarian"),
+    ("my", "Burmese"),
+    ("ca", "Catalan"),
+    ("zh", "Chinese"),
+    ("hr", "Croatian"),
+    ("cs", "Czech"),
+    ("da", "Danish"),
+    ("nl", "Dutch"),
+    ("en", "English"),
+    ("et", "Estonian"),
+    ("fi", "Finnish"),
+    ("fr", "French"),
+    ("ka", "Georgian"),
+    ("de", "German"),
+    ("el", "Greek"),
+    ("gu", "Gujarati"),
+    ("hi", "Hindi"),
+    ("hu", "Hungarian"),
+    ("is", "Icelandic"),
+    ("id", "Indonesian"),
+    ("it", "Italian"),
+    ("ja", "Japanese"),
+    ("kn", "Kannada"),
+    ("kk", "Kazakh"),
+    ("ko", "Korean"),
+    ("lv", "Latvian"),
+    ("lt", "Lithuanian"),
+    ("mk", "Macedonian"),
+    ("ms", "Malay"),
+    ("ml", "Malayalam"),
+    ("mr", "Marathi"),
+    ("mn", "Mongolian"),
+    ("no", "Norwegian"),
+    ("fa", "Persian"),
+    ("pl", "Polish"),
+    ("pt", "Portuguese"),
+    ("pa", "Punjabi"),
+    ("ro", "Romanian"),
+    ("ru", "Russian"),
+    ("sr", "Serbian"),
+    ("sk", "Slovak"),
+    ("sl", "Slovenian"),
+    ("so", "Somali"),
+    ("es", "Spanish"),
+    ("sw", "Swahili"),
+    ("sv", "Swedish"),
+    ("tl", "Tagalog"),
+    ("ta", "Tamil"),
+    ("te", "Telugu"),
+    ("th", "Thai"),
+    ("tr", "Turkish"),
+    ("uk", "Ukrainian"),
+    ("ur", "Urdu"),
+    ("vi", "Vietnamese"),
+]
 
 
 class MenuChoice(IntEnum):
@@ -135,89 +198,7 @@ def settings_page():
     time.sleep(1)
 
 
-def choose_languages(cur_source: str = "", cur_target: str = "",
-                     is_fallback: bool = False):
-    LANGUAGES = [
-        ("sq", "Albanian"),
-        ("am", "Amharic"),
-        ("ar", "Arabic"),
-        ("hy", "Armenian"),
-        ("bn", "Bengali"),
-        ("bs", "Bosnian"),
-        ("bg", "Bulgarian"),
-        ("my", "Burmese"),
-        ("ca", "Catalan"),
-        ("zh", "Chinese"),
-        ("hr", "Croatian"),
-        ("cs", "Czech"),
-        ("da", "Danish"),
-        ("nl", "Dutch"),
-        ("en", "English"),
-        ("et", "Estonian"),
-        ("fi", "Finnish"),
-        ("fr", "French"),
-        ("ka", "Georgian"),
-        ("de", "German"),
-        ("el", "Greek"),
-        ("gu", "Gujarati"),
-        ("hi", "Hindi"),
-        ("hu", "Hungarian"),
-        ("is", "Icelandic"),
-        ("id", "Indonesian"),
-        ("it", "Italian"),
-        ("ja", "Japanese"),
-        ("kn", "Kannada"),
-        ("kk", "Kazakh"),
-        ("ko", "Korean"),
-        ("lv", "Latvian"),
-        ("lt", "Lithuanian"),
-        ("mk", "Macedonian"),
-        ("ms", "Malay"),
-        ("ml", "Malayalam"),
-        ("mr", "Marathi"),
-        ("mn", "Mongolian"),
-        ("no", "Norwegian"),
-        ("fa", "Persian"),
-        ("pl", "Polish"),
-        ("pt", "Portuguese"),
-        ("pa", "Punjabi"),
-        ("ro", "Romanian"),
-        ("ru", "Russian"),
-        ("sr", "Serbian"),
-        ("sk", "Slovak"),
-        ("sl", "Slovenian"),
-        ("so", "Somali"),
-        ("es", "Spanish"),
-        ("sw", "Swahili"),
-        ("sv", "Swedish"),
-        ("tl", "Tagalog"),
-        ("ta", "Tamil"),
-        ("te", "Telugu"),
-        ("th", "Thai"),
-        ("tr", "Turkish"),
-        ("uk", "Ukrainian"),
-        ("ur", "Urdu"),
-        ("vi", "Vietnamese"),
-    ]
-
-    if is_fallback:
-        source = input(f"Enter a source language code (default: {cur_source}): ")
-
-        if source not in [code for code, _ in LANGUAGES]:
-            print("ERROR: Invalid Language Code")
-            return None, None
-
-        if not source:
-            return None, None
-
-        target = input(f"Enter a target language code (default: {cur_target}): ")
-
-        if target not in [code for code, _ in LANGUAGES]:
-            print("ERROR: Invalid Language Code")
-            return None, None
-
-        return source, target
-
+def choose_languages(cur_source: str = "", cur_target: str = "") -> (str, str):
     source = radiolist_dialog(
         title="Source Language",
         text="Choose the language to translate from:",
@@ -246,98 +227,10 @@ def save_language_choices(source_code, target_code):
         f.write(f"VOICE = \"{VOICE}\"\n")
 
 
-def fallback_main_menu(verbose: bool = True):
-    console.clear()
-    console.rule("[bold red]Fallback Mode Activated")
-    console.print("[yellow]You're not running this in a real terminal.[/yellow]")
-    console.print("[green]Functionality is preserved, but UI is simplified.[/green]\n")
-
-    while True:
-        print("\n==== Translator ====")
-        print("1. Start")
-        print("2. Settings")
-        print("3. Credits")
-        print("4. Exit")
-
-        choice = -1
-
-        while choice not in MenuChoice:
-                choice = input("Select an option (1-4): ").strip()
-
-                if not choice.isnumeric():
-                    continue
-
-                choice = int(choice)
-                if choice in MenuChoice:
-                    break
-                else:
-                    print("Please enter a number between 1 and 4.")
-
-        match choice:
-            case MenuChoice.START:
-                api_key = get_api_key()
-                if not api_key:
-                    api_key = input("Enter your OpenAI API Key: ").strip()
-                    if api_key:
-                        save_api_key(api_key)
-                    else:
-                        print("No key entered. Returning to menu.")
-                        continue
-
-                from controls import __dict__ as controls_dict
-                source, target = choose_languages(
-                    controls_dict["SOURCE_LANGUAGE"],
-                    controls_dict["TARGET_LANGUAGE"],
-                    is_fallback=True,
-                )
-
-                if not source or not target:
-                    continue  # user cancelled
-
-                controls_dict["SOURCE_LANGUAGE"] = source
-                controls_dict["TARGET_LANGUAGE"] = target
-
-                save_language_choices(source, target)
-
-                thread = run_main_app(verbose=verbose)
-
-                print(f"🌐 Translating {source.upper()} ➝ "
-                         f"{target.upper()} - "
-                         f"Press {SEND_REQUEST_KEY} to translate!")
-
-                try:
-                    input("[running] Enter any key to return to main menu.\n")
-                except KeyboardInterrupt:
-                    continue
-
-                stop_event.set()
-                thread.join()
-                stop_event.clear()
-
-            case MenuChoice.SETTINGS:
-                key = input("Enter your OPENAI API Key: ").strip()
-                if key:
-                    save_api_key(key)
-                    print("API key saved.")
-                else:
-                    print("No key entered.")
-
-            case MenuChoice.CREDITS:
-                print("Built by Brian (Wei Hao) Ma & Ryan B. Green")
-                time.sleep(2)
-
-            case MenuChoice.EXIT:
-                print("Goodbye!")
-                break
-
-            case _:
-                console.print("[red]Unknown menu choice[/red]")
-
-
 def show_title():
     console.clear()
     console.print(Rule(style="cyan"))
-    console.print(Panel(Text(ascii_art, justify="center", style="bold magenta"),
+    console.print(Panel(Text(ASCII_LOGO, justify="center", style="bold magenta"),
                         expand=False, border_style="bright_blue"))
     console.print(Rule(style="cyan"))
 
@@ -426,4 +319,5 @@ if __name__ == "__main__":
     if in_terminal():
         main_menu()
     else:
+        from cli_fallback import fallback_main_menu
         fallback_main_menu()

@@ -2,7 +2,6 @@ import argparse
 from cli import (
     in_terminal,
     main_menu,
-    fallback_main_menu,
 )
 
 def parse_args():
@@ -25,6 +24,7 @@ def main():
     if in_terminal():
         main_menu(verbose=args.verbose)
     else:
+        from cli_fallback import fallback_main_menu
         fallback_main_menu(verbose=True)
 
 
