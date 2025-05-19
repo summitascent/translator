@@ -2,7 +2,6 @@ import io
 import os
 import sys
 import time
-import importlib
 from enum import IntEnum
 from threading import (
     Thread,
@@ -24,6 +23,8 @@ from prompt_toolkit.shortcuts import (
 )
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
+
+from main import run
 
 API_KEY_FILE = "_secrets.py"
 console = Console()
@@ -157,8 +158,6 @@ def in_terminal():
 
 
 def run_main_app(logfile_path="translation.log", verbose: bool = False):
-    import main
-    importlib.reload(main)
 
     if not verbose:
         # configure logging for run thread
@@ -180,7 +179,7 @@ def run_main_app(logfile_path="translation.log", verbose: bool = False):
             if not verbose:
                 sys.stdout = FileWriter(logfile_path)
 
-            main.run(stop_event)
+            run(stop_event)
         finally:
             sys.stdout = sys.__stdout__
 
